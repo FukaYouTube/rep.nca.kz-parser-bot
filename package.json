@@ -17,7 +17,7 @@
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
-    "fast-csv": "^4.3.2",
+    "exceljs": "^4.1.1",
     "telegraf": "^3.38.0"
   }
 }
