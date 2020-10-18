@@ -4,7 +4,7 @@ const { keyboard, removeKeyboard } = require('telegraf/markup')
 
 const dataConfig = require('../../data.config')
 
-const { mainParser, scanner } = require('../module/main.parser')
+const { scanner } = require('../module/main.parser')
 
 const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
 
