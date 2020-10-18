@@ -37,9 +37,11 @@ app.hears(/./gm, (ctx, next) => {
             ctx.reply(`Чтобы продолжить, выберите категорию:`, keyboard(dataConfig.SELECT_CATEGORY).oneTime().resize().extra())
         break
         case dataConfig.SELECT_CATEGORY[0][0]: // ['Сертификаты соответствия']
+            if(!ctx.session.end_page || ctx.session.end_page.length === 0) return ctx.reply('Номера конец страницы на котором вы остановились не найдены!', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
             mainParser(ctx, 0, 'proceed_page', { url1: process.env.URL_START_1, url2: process.env.URL_END_1 })
         break
         case dataConfig.SELECT_CATEGORY[1][0]: // ['Декларации о соответствии']
+            if(!ctx.session.end_page || ctx.session.end_page.length === 0) return ctx.reply('Номера конец страницы на котором вы остановились не найдены!', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
             mainParser(ctx, 0, 'proceed_page', { url1: process.env.URL_START_2, url2: process.env.URL_END_2 })
         break
         default:
