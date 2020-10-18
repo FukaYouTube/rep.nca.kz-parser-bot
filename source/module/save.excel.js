@@ -7,10 +7,10 @@ const { keyboard } = require('telegraf/markup')
 
 const dataConfig = require('../../data.config')
 
-exports.save = async (ctx, data) => {
+exports.save = async (ctx, data, end_page) => {
     if(data.length === 0) return ctx.reply(`При сканировании электронные почты не были найдены`, keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
 
-    const path_file = `source/upload/${ctx.from.id}_${ctx.session.selected_name}.xlsx`
+    const path_file = `source/upload/${ctx.from.id}_${ctx.session.selected_name}_${end_page || 0}.xlsx`
     if(fs.existsSync(path_file)) fs.unlinkSync(path_file)
 
     try {
