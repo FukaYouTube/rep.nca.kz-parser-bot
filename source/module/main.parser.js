@@ -56,7 +56,7 @@ exports.findEmail = data => {
 
     data.forEach((d, i) => {
         if(email.test(d.values)){
-            dataConfig.EMAIL_ITEMS.push({ id: i, email: d.values.match(email)[0], date: new Date() })
+            dataConfig.EMAIL_ITEMS.push(d.values.match(email)[0])
         }  
     })
 }
