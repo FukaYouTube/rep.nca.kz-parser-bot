@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 const { removeKeyboard } = require('telegraf/markup')
 
 const dataConfig = require('../../data.config')
+const { id } = require('../stage/custom.stage')
 const excel = require('./save.excel')
 
 exports.mainParser = async (ctx, start, end, url) => {
@@ -22,7 +23,7 @@ exports.mainParser = async (ctx, start, end, url) => {
             ctx.session.end_page = Number(endPagesNumber)
         break
         case 'proceed_page':
-            this.scanner(ctx, ctx.session.end_page, Number(endPagesNumber), url)
+            this.scanner(ctx, start, Number(endPagesNumber), url)
             ctx.session.end_page = Number(endPagesNumber)
         break
     }
@@ -30,6 +31,21 @@ exports.mainParser = async (ctx, start, end, url) => {
 
 exports.scanner = async (ctx, start, end, url) => {
     for(let i = start; i <= end; i++){
+        if(dataConfig.DATA_ITEMS.length >= 3250){
+            ctx.session.end_page = i - 1
+            ctx.replyWithMarkdown(`Память переполнена! Отправляю файл... \nЧтобы продолжить загрузку, выберите "Продолжить загрузку"`)
+            
+            dataConfig.DATA_ITEMS.splice(0, 1)
+            this.findEmail(dataConfig.DATA_ITEMS)
+
+            ctx.reply(`Готово! Отправляю excel файл...`)
+            excel.save(ctx, dataConfig.EMAIL_ITEMS, i)
+
+            dataConfig.DATA_ITEMS = []
+            dataConfig.EMAIL_ITEMS = []
+            return null
+        }
+
         ctx.reply(`Выполняется поиск, ожидайте... \nПерехожу по страницам сайта: ${i} из ${end}`)
 
         let nextPage = await axios.get(url.url1 + i + url.url2)
