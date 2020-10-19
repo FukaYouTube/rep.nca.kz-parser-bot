@@ -4,7 +4,6 @@ module.exports = {
     DEFAULT_START_PAGE_2: 2000,
     
     // Saved email address to this arrays
-    DATA_ITEMS: [],
     EMAIL_ITEMS: [],
     
     // Menu buttons
