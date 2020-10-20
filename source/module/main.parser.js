@@ -6,13 +6,13 @@ const { removeKeyboard } = require('telegraf/markup')
 const dataConfig = require('../../data.config')
 const excel = require('./save.excel')
 
-exports.mainParser = async (ctx, start, end, url) => {
+exports.mainParser = async (ctx, start, end, url, get_end_page) => {
     ctx.replyWithMarkdown(`Идет сканирование сайта, *ожидайте*! \nВыбрана из главного меню: "${ctx.session.selected_name}"`, removeKeyboard().oneTime().resize().extra())
 
     const { data } = await axios.get(`${url.url1}1${url.url2}`)
     const $ = cheerio.load(data)
 
-    const endPagesNumberInHTML = $('.text tr td').eq(-2).html()
+    const endPagesNumberInHTML = $('.text tr td').eq(get_end_page).html()
     const loadEndPages = cheerio.load(endPagesNumberInHTML)
     const endPagesNumber = loadEndPages('a').eq(-1).text()
 
