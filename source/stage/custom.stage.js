@@ -47,8 +47,7 @@ const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
         default:
             ctx.reply('Ошибка! Вами отправленная категория не найдена \nПовторите попытку', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
     }
-
-    ctx.session.custom_number_page = []
+    
     return ctx.scene.leave()
 })
 

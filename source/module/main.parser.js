@@ -52,6 +52,7 @@ exports.scanner = async (ctx, start, end, url) => {
         })   
     }
 
+    ctx.session.custom_number_page = []
     ctx.reply(`Готово, ожидайте файл...`)
     excel.save(ctx)
 }
