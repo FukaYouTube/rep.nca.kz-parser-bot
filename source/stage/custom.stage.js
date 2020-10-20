@@ -41,13 +41,14 @@ const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
         case dataConfig.SELECT_CATEGORY[0][0]:
             scanner(ctx, Number(ctx.session.custom_number_page[0]), Number(ctx.message.text), { url1: process.env.URL_START_1, url2: process.env.URL_END_1 })
         break
-        case dataConfig.SELECT_CATEGORY[0][1]:
+        case dataConfig.SELECT_CATEGORY[1][0]:
             scanner(ctx, Number(ctx.session.custom_number_page[0]), Number(ctx.message.text), { url1: process.env.URL_START_2, url2: process.env.URL_END_2 })
         break
         default:
             ctx.reply('Ошибка! Вами отправленная категория не найдена \nПовторите попытку', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
     }
 
+    ctx.session.custom_number_page = []
     return ctx.scene.leave()
 })
 
