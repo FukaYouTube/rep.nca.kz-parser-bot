@@ -25,10 +25,10 @@ app.hears(/./gm, (ctx, next) => {
 
     switch(ctx.message.text){
         case dataConfig.MAIN_MENU[0][0]: // ['Сканировать "Сертификаты соответствия"']
-            mainParser(ctx, dataConfig.DEFAULT_START_PAGE_1, 'end_page', { url1: process.env.URL_START_1, url2: process.env.URL_END_1 })
+            mainParser(ctx, dataConfig.DEFAULT_START_PAGE_1, 'end_page', { url1: process.env.URL_START_1, url2: process.env.URL_END_1 }, -2)
         break
         case dataConfig.MAIN_MENU[1][0]: // ['Сканировать "Декларации о соответствии"']
-            mainParser(ctx, dataConfig.DEFAULT_START_PAGE_2, 'end_page', { url1: process.env.URL_START_2, url2: process.env.URL_END_2 })
+            mainParser(ctx, dataConfig.DEFAULT_START_PAGE_2, 'end_page', { url1: process.env.URL_START_2, url2: process.env.URL_END_2 }, -3)
         break
         case dataConfig.MAIN_MENU[2][0]: // ['Указать страницы самому от и до']
             ctx.scene.enter('CUSTOM_PAGE_SCENE')
