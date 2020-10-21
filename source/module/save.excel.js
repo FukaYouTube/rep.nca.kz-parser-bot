@@ -3,12 +3,12 @@ const fs = require('fs')
 const ExcelJS = require('exceljs')
 const excel = new ExcelJS.Workbook()
 
-const { keyboard } = require('telegraf/markup')
-
 const dataConfig = require('../../data.config')
 
+const { sendMessageMarkup, sendDocument, sendDocumentMarkup } = require('./send.message')
+
 exports.save = async (ctx, end_page) => {
-    if(dataConfig.EMAIL_ITEMS.length === 0) return ctx.reply(`При сканировании электронные почты не были найдены`, keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+    if(dataConfig.EMAIL_ITEMS.length === 0) return sendMessageMarkup(ctx, `При сканировании электронные почты не были найдены`, dataConfig.MAIN_MENU)
 
     const path_file = `source/upload/${ctx.from.id}_${ctx.session.selected_name}_${end_page || 0}.xlsx`
     if(fs.existsSync(path_file)) fs.unlinkSync(path_file)
@@ -30,7 +30,5 @@ exports.save = async (ctx, end_page) => {
 
     await excel.xlsx.writeFile(path_file)
     
-    end_page ? 
-    ctx.replyWithDocument({ source: path_file }) :
-    ctx.replyWithDocument({ source: path_file }, keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+    end_page ? sendDocument(ctx, path_file) : sendDocumentMarkup(ctx, path_file, dataConfig.MAIN_MENU)
 }
