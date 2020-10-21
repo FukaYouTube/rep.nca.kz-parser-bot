@@ -31,4 +31,5 @@ exports.save = async (ctx, end_page) => {
     await excel.xlsx.writeFile(path_file)
     
     end_page ? sendDocument(ctx, path_file) : sendDocumentMarkup(ctx, path_file, dataConfig.MAIN_MENU)
+    dataConfig.EMAIL_ITEMS = []
 }
