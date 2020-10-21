@@ -5,20 +5,17 @@ const app = new Telegraf(process.env.BOT_TOKEN)
 
 const stage = require('./source/stage')
 const session = require('telegraf/session')
-const { keyboard } = require('telegraf/markup')
 
 const dataConfig = require('./data.config')
 const { mainParser } = require('./source/module/main.parser')
+const { sendMessage, sendMessageMarkup } = require('./source/module/send.message')
 
 // Telegraf middleware
 app.use(session())
 app.use(stage)
 
 // Bot commands
-app.start(ctx => ctx.replyWithMarkdown(
-    `*Здравствуйте ${ctx.from.first_name || ctx.from.username}!* Вот главное меню:`,
-    keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra()
-))
+app.start(ctx => sendMessageMarkup(ctx, `*Здравствуйте ${ctx.from.first_name || ctx.from.username}!* Вот главное меню:`, dataConfig.MAIN_MENU))
 
 app.hears(/./gm, (ctx, next) => {
     ctx.session.selected_name = ctx.message.text
@@ -34,18 +31,18 @@ app.hears(/./gm, (ctx, next) => {
             ctx.scene.enter('CUSTOM_PAGE_SCENE')
         break
         case dataConfig.MAIN_MENU[3][0]: // ['Продолжить загрузку']
-            ctx.reply(`Чтобы продолжить, выберите категорию:`, keyboard(dataConfig.SELECT_CATEGORY).oneTime().resize().extra())
+            sendMessageMarkup(ctx, `Чтобы продолжить, выберите категорию:`, dataConfig.SELECT_CATEGORY)
         break
         case dataConfig.SELECT_CATEGORY[0][0]: // ['Сертификаты соответствия']
-            if(!ctx.session.end_page) return ctx.reply('Номера конец страницы на котором вы остановились не найдены!', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+            if(!ctx.session.end_page) return sendMessageMarkup(ctx, 'Номера конец страницы на котором вы остановились не найдены!', dataConfig.MAIN_MENU)
             mainParser(ctx, ctx.session.end_page, 'proceed_page', { url1: process.env.URL_START_1, url2: process.env.URL_END_1 })
         break
         case dataConfig.SELECT_CATEGORY[1][0]: // ['Декларации о соответствии']
-            if(!ctx.session.end_page) return ctx.reply('Номера конец страницы на котором вы остановились не найдены!', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+            if(!ctx.session.end_page) return sendMessageMarkup(ctx, 'Номера конец страницы на котором вы остановились не найдены!', dataConfig.MAIN_MENU)
             mainParser(ctx, ctx.session.end_page, 'proceed_page', { url1: process.env.URL_START_2, url2: process.env.URL_END_2 })
         break
         default:
-            ctx.replyWithMarkdown(`*Ошибка* Данная команда "${ctx.message.text}" не найдена!`)
+            sendMessage(ctx, `*Ошибка* Данная команда "${ctx.message.text}" не найдена!`)
             next()
     }
 })
