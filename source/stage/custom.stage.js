@@ -1,14 +1,13 @@
 const Wizard = require('telegraf/scenes/wizard')
 
-const { keyboard, removeKeyboard } = require('telegraf/markup')
-
 const dataConfig = require('../../data.config')
 
 const { scanner } = require('../module/main.parser')
+const { sendMessage, sendMessageMarkup, sendMessageRemoveMarkup } = require('../module/send.message')
 
 const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
 
-    ctx.reply('Выберите категорию:', keyboard(dataConfig.SELECT_CATEGORY).oneTime().resize().extra())
+    sendMessageMarkup(ctx, 'Выберите категорию:', dataConfig.SELECT_CATEGORY)
     return ctx.wizard.next()
 
 }, ctx => {
@@ -16,24 +15,24 @@ const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
     ctx.session.custom_number_page = []
     ctx.session.selected_name = ctx.message.text
 
-    ctx.reply('Укажите начало страницы:', removeKeyboard().oneTime().resize().extra())
+    sendMessageRemoveMarkup(ctx, 'Укажите начало страницы:')
     return ctx.wizard.next()
 
 }, ctx => {
 
     if(!Number(ctx.message.text)){
-        ctx.reply('Ошибка! Отправьте цифру. \nПовторите попытку', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+        sendMessageMarkup('Ошибка! Отправьте цифру. \nПовторите попытку', dataConfig.MAIN_MENU)
         return ctx.scene.leave()
     }
 
     ctx.session.custom_number_page.push(ctx.message.text)
-    ctx.reply('Укажите конец страницы:')
+    sendMessage(ctx, 'Укажите конец страницы:')
     return ctx.wizard.next()
 
 }, ctx => {
 
     if(!Number(ctx.message.text)){
-        ctx.reply('Ошибка! Отправьте цифру. \nПовторите попытку', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+        sendMessageMarkup('Ошибка! Отправьте цифру. \nПовторите попытку', dataConfig.MAIN_MENU)
         return ctx.scene.leave()
     }
 
@@ -45,7 +44,7 @@ const WizardScene = new Wizard('CUSTOM_PAGE_SCENE', ctx => {
             scanner(ctx, Number(ctx.session.custom_number_page[0]), Number(ctx.message.text), { url1: process.env.URL_START_2, url2: process.env.URL_END_2 })
         break
         default:
-            ctx.reply('Ошибка! Вами отправленная категория не найдена \nПовторите попытку', keyboard(dataConfig.MAIN_MENU).oneTime().resize().extra())
+            sendMessageMarkup(ctx, 'Ошибка! Вами отправленная категория не найдена \nПовторите попытку', dataConfig.MAIN_MENU)
     }
     
     return ctx.scene.leave()
