@@ -1,13 +1,13 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
 
-const { removeKeyboard } = require('telegraf/markup')
-
 const dataConfig = require('../../data.config')
 const excel = require('./save.excel')
 
+const { sendMessage, sendMessageRemoveMarkup } = require('./send.message')
+
 exports.mainParser = async (ctx, start, end, url, get_end_page) => {
-    ctx.replyWithMarkdown(`Идет сканирование сайта, *ожидайте*! \nВыбрана из главного меню: "${ctx.session.selected_name}"`, removeKeyboard().oneTime().resize().extra())
+    sendMessageRemoveMarkup(ctx, `Идет сканирование сайта, *ожидайте*! \nВыбрана из главного меню: "${ctx.session.selected_name}"`)
 
     const { data } = await axios.get(`${url.url1}1${url.url2}`)
     const $ = cheerio.load(data)
@@ -31,13 +31,13 @@ exports.mainParser = async (ctx, start, end, url, get_end_page) => {
 exports.scanner = async (ctx, start, end, url) => {
     for(let i = start; i <= end; i++){
         if(dataConfig.EMAIL_ITEMS.length >= 3000){
-            ctx.reply(`Память переполнен! Отправляю файл \nПродолжу загрузку через несколько минут...`)
+            sendMessage(ctx, `Память переполнен! Отправляю файл \nПродолжу загрузку через несколько минут...`)
             excel.save(ctx, ctx.session.end_page)
 
             dataConfig.EMAIL_ITEMS = []
         }
 
-        ctx.reply(`Выполняется поиск, ожидайте... \nПерехожу по страницам сайта: ${i} из ${end}`)
+        sendMessage(ctx, `Выполняется поиск, ожидайте... \nПерехожу по страницам сайта: ${i} из ${end}`)
 
         let nextPage = await axios.get(url.url1 + i + url.url2)
         let selector = cheerio.load(nextPage.data)
@@ -53,6 +53,6 @@ exports.scanner = async (ctx, start, end, url) => {
     }
 
     ctx.session.custom_number_page = []
-    ctx.reply(`Готово, ожидайте файл...`)
+    sendMessage(ctx, `Готово, ожидайте файл...`)
     excel.save(ctx)
 }
