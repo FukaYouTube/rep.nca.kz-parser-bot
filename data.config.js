@@ -1,7 +1,7 @@
 module.exports = {
     // Pages
     DEFAULT_START_PAGE_1: 2780,
-    DEFAULT_START_PAGE_2: 2000,
+    DEFAULT_START_PAGE_2: 5755,
     
     // Saved email address to this arrays
     EMAIL_ITEMS: [],
