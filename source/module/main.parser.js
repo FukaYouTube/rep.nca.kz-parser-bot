@@ -9,22 +9,27 @@ const { sendMessage, sendMessageRemoveMarkup } = require('./send.message')
 exports.mainParser = async (ctx, start, end, url, get_end_page) => {
     sendMessageRemoveMarkup(ctx, `Идет сканирование сайта, *ожидайте*! \nВыбрана из главного меню: "${ctx.session.selected_name}"`)
 
-    const { data } = await axios.get(`${url.url1}1${url.url2}`)
-    const $ = cheerio.load(data)
-
-    const endPagesNumberInHTML = $('.text tr td').eq(get_end_page).html()
-    const loadEndPages = cheerio.load(endPagesNumberInHTML)
-    const endPagesNumber = loadEndPages('a').eq(-1).text()
-
-    switch(end){
-        case 'end_page':
-            this.scanner(ctx, start, Number(endPagesNumber), url)
-            ctx.session.end_page = Number(endPagesNumber)
-        break
-        case 'proceed_page':
-            this.scanner(ctx, start, Number(endPagesNumber), url)
-            ctx.session.end_page = Number(endPagesNumber)
-        break
+    try {
+        const { data } = await axios.get(`${url.url1}1${url.url2}`)
+        const $ = cheerio.load(data)
+    
+        const endPagesNumberInHTML = $('.text tr td').eq(get_end_page).html()
+        const loadEndPages = cheerio.load(endPagesNumberInHTML)
+        const endPagesNumber = loadEndPages('a').eq(-1).text()
+    
+        switch(end){
+            case 'end_page':
+                this.scanner(ctx, start, Number(endPagesNumber), url)
+                ctx.session.end_page = Number(endPagesNumber)
+            break
+            case 'proceed_page':
+                this.scanner(ctx, start, Number(endPagesNumber), url)
+                ctx.session.end_page = Number(endPagesNumber)
+            break
+        }
+    }catch(error){
+        ctx.reply('Произошла ошибка: не удалось зайти на сайт \nПовторяю процесс')
+        this.mainParser(ctx, start, end, url, get_end_page)
     }
 }
 
@@ -39,7 +44,14 @@ exports.scanner = async (ctx, start, end, url) => {
 
         sendMessage(ctx, `Выполняется поиск, ожидайте... \nПерехожу по страницам сайта: ${i} из ${end}`)
 
-        let nextPage = await axios.get(url.url1 + i + url.url2)
+        let nextPage
+        try {
+            nextPage = await axios.get(url.url1 + i + url.url2)
+        } catch(error){
+            console.log(error)
+            nextPage = await axios.get(url.url1 + i + url.url2)
+        }
+
         let selector = cheerio.load(nextPage.data)
 
         selector('.text tr td a').each((index, element) => {
